@@ -1,0 +1,75 @@
+<html>
+<head>
+	<link href="css/main.css" rel="stylesheet">
+	<script src="js/fabric.min.js"></script>
+	<title>test</title>
+</head>
+
+<body>
+	<h1>test canvas</h1>
+	<div class="canvas_box">
+		<canvas id="mycanvas"></canvas>
+	</div>
+	<button onclick="start()">start</button>
+	<button onclick="stop()">stop</button>
+	<script>
+		var canvas = new fabric.Canvas('mycanvas');
+		canvas.selection = false;
+		canvas.setHeight(500);
+		canvas.setWidth(800);
+
+		class rectangle extends fabric.Rect {
+			constructor(dir,parm) {
+				super(parm);
+				this.dir = dir;
+			}
+			move() {
+				this.check();
+				var left = this.get('left')+(1*this.dir[0]);
+				var top = this.get('top')+(1*this.dir[1]);
+				this.set({left : left, top : top});	
+			}
+			check() {
+				var left = this.get('left');
+				var right = left+this.get('width');
+				var top = this.get('top');
+				var bottom = top + this.get('height');
+
+				if(left < 0 || right > canvas.getWidth()) {
+					this.dir[0] *= -1;
+				}
+				if(top < 0 || bottom > canvas.getHeight()) {
+					this.dir[1] *= -1;
+				}
+			}
+		}
+
+		var rectlist = [];
+		rectlist.push(new rectangle([1,-1],{width : 100,height : 100,left : 100, top : 100,selectable : false}));
+		rectlist.push(new rectangle([3,-2],{width : 100,height : 100,left : 100, top : 100,selectable : false}));
+		rectlist.push(new rectangle([5,-3],{width : 100,height : 100,left : 100, top : 100,selectable : false}));
+		rectlist.push(new rectangle([7,-4],{width : 100,height : 100,left : 100, top : 100,selectable : false}));
+		rectlist.forEach((item) => {
+			canvas.add(item);
+		});
+		var interval = null;
+
+		function run() {
+			rectlist.forEach((item) => {
+				item.move();
+			});
+			canvas.renderAll();
+			//console.log('rect has been changed');
+		}
+
+		function start() {
+			interval = setInterval(run,16);
+		}
+		function stop() {
+			if(interval != null) {
+				clearInterval(interval)
+			}
+		}
+	</script>
+</body>
+</html>

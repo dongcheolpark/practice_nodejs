@@ -1,0 +1,26 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "practice_express",
+  "main": "app.js",
+  "scripts": {
+    "dev" : "nodemon --watch . -e js,html,css,json app.js",
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dongcheolpark/practice_nodejs.git"
+  },
+  "keywords": [
+    "express"
+  ],
+  "author": "dongcheolpark",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dongcheolpark/practice_nodejs/issues"
+  },
+  "homepage": "https://github.com/dongcheolpark/practice_nodejs#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
