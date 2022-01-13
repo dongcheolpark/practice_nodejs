@@ -12,15 +12,17 @@
 	</div>
 	<button onclick="start()">start</button>
 	<button onclick="stop()">stop</button>
+	<h2 id = "count">0</h2>
 	<script>
 		var canvas = new fabric.Canvas('mycanvas');
 		canvas.selection = false;
 		canvas.setHeight(500);
 		canvas.setWidth(800);
-
+		var count = 0;
 		class rectangle extends fabric.Rect {
-			constructor(dir,parm) {
+			constructor(dir,weight,parm) {
 				super(parm);
+				this.weight = weight;
 				this.dir = dir;
 			}
 			move() {
@@ -37,24 +39,49 @@
 
 				if(left < 0 || right > canvas.getWidth()) {
 					this.dir[0] *= -1;
+					document.getElementById('count').innerHTML = ++count;
 				}
 				if(top < 0 || bottom > canvas.getHeight()) {
 					this.dir[1] *= -1;
+					document.getElementById('count').innerHTML = ++count;
 				}
 			}
 		}
 
 		var rectlist = [];
-		rectlist.push(new rectangle([1,-1],{width : 100,height : 100,left : 100, top : 100,selectable : false}));
-		rectlist.push(new rectangle([3,-2],{width : 100,height : 100,left : 100, top : 100,selectable : false}));
-		rectlist.push(new rectangle([5,-3],{width : 100,height : 100,left : 100, top : 100,selectable : false}));
-		rectlist.push(new rectangle([7,-4],{width : 100,height : 100,left : 100, top : 100,selectable : false}));
+		rectlist.push(new rectangle([0,0],1,{width : 100,height : 100,left : 2, top : canvas.getHeight()-100,fill : 'red',selectable : false}));
+		rectlist.push(new rectangle([-0.001,0],100000000,{width : 100,height : 100,left : 104, top : canvas.getHeight()-100,selectable : false}));
 		rectlist.forEach((item) => {
 			canvas.add(item);
 		});
 		var interval = null;
 
+		function checkBoxToBox(r1,r2) {
+			var left1 = r1.get('left');
+			var right1 = left1+r1.get('width');
+			var top1 = r1.get('top');
+			var bottom1 = top1 + r1.get('height');
+			var left2 = r2.get('left');
+			var right2 = left2+r2.get('width');
+			var top2 = r2.get('top');
+			var bottom2 = top2 + r2.get('height');
+			if(right1 >= left2 && 
+			left1 <=right2 /*&&
+			top1 >= bottom2 &&
+			bottom1 <= top2*/) {
+				document.getElementById('count').innerHTML = ++count;
+				var v1 = r1.dir[0];
+				var v2 = r2.dir[0];
+				var m1 = r1.weight;
+				var m2 = r2.weight;
+				r1.dir[0] = v1 - (2*m2)/(m1+m2)*(v1-v2);
+				r2.dir[0] = v2 + (2*m1)/(m1+m2)*(v1-v2);
+				console.log(v2);
+			}
+		}
+
 		function run() {
+			checkBoxToBox(rectlist[0],rectlist[1])
 			rectlist.forEach((item) => {
 				item.move();
 			});
@@ -63,7 +90,7 @@
 		}
 
 		function start() {
-			interval = setInterval(run,16);
+			interval = setInterval(run,1);
 		}
 		function stop() {
 			if(interval != null) {
